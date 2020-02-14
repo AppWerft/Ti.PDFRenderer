@@ -1,0 +1,18 @@
+#
+# this is your module manifest and used by Titanium
+# during compilation, packaging, distribution, etc.
+#
+version: 1.0.0
+apiversion: 4
+architectures: arm64-v8a armeabi-v7a x86
+description: pdfrenderer
+author: Rainer
+license: Specify your license
+copyright: Copyright (c) 2020 by Your Company
+
+# these should not be edited
+name: pdfrenderer
+moduleid: ti.pdfrenderer
+guid: 93745070-6d5d-4e54-a20d-e1c70cac5b92
+platform: android
+minsdk: 8.3.0.GA

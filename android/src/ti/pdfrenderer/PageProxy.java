@@ -23,5 +23,11 @@ public class PageProxy extends KrollProxy {
 	public Page getPage() {
 		return page;
 	}
+	public int getWidth() {
+		return page.getWidth();
+	}
+	public int getHeigt() {
+		return page.getHeight();
+	}
 
 }

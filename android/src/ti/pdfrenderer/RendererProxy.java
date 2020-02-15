@@ -58,11 +58,17 @@ public class RendererProxy extends KrollProxy {
 		}
 	}
 
-	
+	@Kroll.method
 	public PageProxy getPage(int index) {
 		return new PageProxy(renderer.openPage(index));
 	}
 	
+	@Kroll.method
+	public PageProxy getFirstPage() {
+		return new PageProxy(renderer.openPage(0));
+	}
+	
+	@Kroll.method
 	public void getPageCount() {
 		renderer.getPageCount();
 	}

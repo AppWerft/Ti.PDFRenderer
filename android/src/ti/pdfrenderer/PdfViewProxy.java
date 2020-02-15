@@ -28,35 +28,39 @@ import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
 import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.graphics.pdf.PdfRenderer;
 import android.graphics.pdf.PdfRenderer.Page;
 import android.os.ParcelFileDescriptor;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import ti.modules.titanium.filesystem.FileProxy;
 
-
 // This proxy can be created by calling Pdfrenderer.createExample({message: "hello world"})
-@Kroll.proxy(creatableInModule=PdfrendererModule.class)
-public class PdfViewProxy extends TiViewProxy
-{
+@Kroll.proxy(creatableInModule = PdfrendererModule.class)
+public class PdfViewProxy extends TiViewProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "ExampleProxy";
-	private static final boolean DBG = TiConfig.LOGD;
+	private Bitmap bitmap;
+	private int width;
+	private int height;
 
-	private class Pdfview extends TiUIView
-	{
+	private class Pdfview extends TiUIView {
 		public Pdfview(TiViewProxy proxy) {
 			super(proxy);
 			LayoutArrangement arrangement = LayoutArrangement.DEFAULT;
-
-			if (proxy.hasProperty(TiC.PROPERTY_LAYOUT)) {
-				String layoutProperty = TiConvert.toString(proxy.getProperty(TiC.PROPERTY_LAYOUT));
-				if (layoutProperty.equals(TiC.LAYOUT_HORIZONTAL)) {
-					arrangement = LayoutArrangement.HORIZONTAL;
-				} else if (layoutProperty.equals(TiC.LAYOUT_VERTICAL)) {
-					arrangement = LayoutArrangement.VERTICAL;
-				}
-			}
-			setNativeView(new TiCompositeLayout(proxy.getActivity(), arrangement));
+			TiCompositeLayout container = new TiCompositeLayout(proxy.getActivity(), arrangement);
+			ImageView nativeView = new ImageView(proxy.getActivity());
+		    
+		
+			
+			container.addView(nativeView);
+			BitmapDrawable drawable = (BitmapDrawable) nativeView.getDrawable();
+			bitmap = drawable.getBitmap();
+//			nativeView.setImageBitmap(bitmap);
+			setNativeView(container);
 		}
 
 		@Override
@@ -65,33 +69,39 @@ public class PdfViewProxy extends TiViewProxy
 		}
 	}
 
-
 	// Constructor
 	public PdfViewProxy() {
 		super();
 	}
 
 	@Override
-	public TiUIView createView(Activity activity)
-	{
+	public TiUIView createView(Activity activity) {
 		TiUIView view = new Pdfview(this);
 		view.getLayoutParams().autoFillsHeight = true;
 		view.getLayoutParams().autoFillsWidth = true;
+
 		return view;
 	}
 
 	// Handle creation options
 	@Override
 	public void handleCreationDict(KrollDict options) {
+		int renderMode = 0;
 		super.handleCreationDict(options);
+
+		if (options.containsKey("renderMode")) {
+			renderMode = options.getInt("renderMode");
+		}
 		if (options.containsKey("page")) {
 			Object o = options.get("page");
 			if (o instanceof PageProxy) {
-				Page page = ((PageProxy)o).getPage();
+				
+				Page page = ((PageProxy) o).getPage();
+				
+				if (bitmap != null)
+					page.render(bitmap, null, null, renderMode);
 			}
 		}
 	}
-
-	
 
 }

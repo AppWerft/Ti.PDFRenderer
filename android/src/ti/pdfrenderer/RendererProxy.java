@@ -59,8 +59,8 @@ public class RendererProxy extends KrollProxy {
 	}
 
 	
-	public void getPage(int index) {
-		renderer.openPage(index);
+	public PageProxy getPage(int index) {
+		return new PageProxy(renderer.openPage(index));
 	}
 	
 	public void getPageCount() {

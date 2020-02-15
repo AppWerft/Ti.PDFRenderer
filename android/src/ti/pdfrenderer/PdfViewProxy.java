@@ -29,13 +29,14 @@ import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 import android.graphics.pdf.PdfRenderer;
+import android.graphics.pdf.PdfRenderer.Page;
 import android.os.ParcelFileDescriptor;
 import ti.modules.titanium.filesystem.FileProxy;
 
 
 // This proxy can be created by calling Pdfrenderer.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule=PdfrendererModule.class)
-public class ViewProxy extends TiViewProxy
+public class PdfViewProxy extends TiViewProxy
 {
 	// Standard Debugging variables
 	private static final String LCAT = "ExampleProxy";
@@ -59,16 +60,14 @@ public class ViewProxy extends TiViewProxy
 		}
 
 		@Override
-		public void processProperties(KrollDict d)
-		{
+		public void processProperties(KrollDict d) {
 			super.processProperties(d);
 		}
 	}
 
 
 	// Constructor
-	public ViewProxy()
-	{
+	public PdfViewProxy() {
 		super();
 	}
 
@@ -85,51 +84,14 @@ public class ViewProxy extends TiViewProxy
 	@Override
 	public void handleCreationDict(KrollDict options) {
 		super.handleCreationDict(options);
-		if (options.containsKey("file")) {
-			try {
-				ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileFromObject(options.get("file")), ParcelFileDescriptor.MODE_READ_ONLY);
-				PdfRenderer renderer = new PdfRenderer(pfd);
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (options.containsKey("page")) {
+			Object o = options.get("page");
+			if (o instanceof PageProxy) {
+				Page page = ((PageProxy)o).getPage();
 			}
 		}
 	}
 
-	private File getFileFromObject(Object fileObject) {
-		TiBaseFile TiFile = null;
-		try {
-			if (fileObject instanceof TiFile) {
-				Log.d(LCAT, "file is TiFile");
-				TiFile = TiFileFactory.createTitaniumFile(((TiFile) fileObject).getFile().getAbsolutePath(), false);
-			} else {
-				if (fileObject instanceof FileProxy) {
-					Log.d(LCAT, "file is FileProxy");
-					TiFile = ((FileProxy) fileObject).getBaseFile();
-				} else {
-					if (fileObject instanceof TiBaseFile) {
-						Log.d(LCAT, "file is TiBaseFile");
-						TiFile = (TiBaseFile) fileObject;
-					} else if (fileObject instanceof String) {
-						// see:
-						// https://github.com/appcelerator/titanium_mobile/blob/master/android/modules/database/src/java/ti/modules/titanium/database/DatabaseModule.java
-						String uriString = resolveUrl(null, (String) fileObject);
-						Log.d(LCAT, "resolvedUrl=" + uriString);
-						TiFile = TiFileFactory.createTitaniumFile(new String[] { uriString }, false);
-					}
-				}
-			}
-			if (TiFile == null) {
-				Log.d(LCAT, "TiFile is null");
-				return null;
-			}
-			File file = TiFile.getNativeFile();
-			
-			return path;
-
-		} catch (Exception e) {
-			Log.d(LCAT, e.getMessage());
-		}
-		return null;
-	}
+	
 
 }

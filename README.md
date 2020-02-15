@@ -8,7 +8,7 @@ const PDF = requirte('ti.pdfrenderer');
 PDF.createPdfView({
 	width :100,
 	height : 200,
-    page : PDF.createRender(file).getPage(0)
+    page : PDF.createRender(file).getFirstPage)
 });
 ```
 
@@ -19,6 +19,18 @@ PDF.createPdfView({
 #### Methods
 
 ##### getPageCount()
-##### getPage()
+##### getPage(index)
+##### getFirstPage()
+
+### Page
+
+#### Methods
+##### getWidth()
+In points (inch/72)
+##### getHeight()
+In points (inch/72)
+##### getIndex()
+
+
 
 ### PdfView

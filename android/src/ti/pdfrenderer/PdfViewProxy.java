@@ -9,6 +9,8 @@
 package ti.pdfrenderer;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -82,9 +84,20 @@ public class PdfViewProxy extends TiViewProxy {
 	public void handleCreationDict(KrollDict options) {
 		int renderMode = 0;
 		super.handleCreationDict(options);
-
 		if (options.containsKey("renderMode")) {
 			renderMode = options.getInt("renderMode");
+		}
+		if (options.containsKey("defaultImage")) {
+			File defaultImageFile = getFileFromObject(options.get("defaultImage"));
+			if (defaultImageFile!= null) {
+				BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+				bitmapOptions.inPreferredConfig = Bitmap.Config.ARGB_8888;
+				try {
+				    bitmap = BitmapFactory.decodeStream(new FileInputStream(defaultImageFile), null, bitmapOptions);
+				} catch (FileNotFoundException e) {
+				    e.printStackTrace();
+				}         
+			}
 		}
 		if (options.containsKey("page")) {
 			Object o = options.get("page");
@@ -92,7 +105,7 @@ public class PdfViewProxy extends TiViewProxy {
 				Page page = ((PageProxy) o).getPage();
 				if (bitmap != null)
 					page.render(bitmap, null, null, renderMode);
-			} else
+			} else if (isInteger(options.get("page")))
 				pageIndex = options.getInt("page");
 		}
 		if (options.containsKey("pdf")) {
@@ -114,7 +127,7 @@ public class PdfViewProxy extends TiViewProxy {
 	 *  <module>/android/platform/android/bin/assets/filePath
 	 *  in native app this is underneath assets folder
 	 * */
-	private Bitmap loadBitmapFromAssets(Context context,String filePath) {
+	private static Bitmap loadBitmapFromAssets(Context context,String filePath) {
 		AssetManager assetManager = context.getAssets();
 
 	    InputStream istr;
@@ -127,7 +140,23 @@ public class PdfViewProxy extends TiViewProxy {
 	    }
 	    return bitmap;
 	}
-	private File getFileFromObject(Object fileObject) {
+	
+	private static boolean isInteger(Object object) {
+		if (object instanceof Integer) {
+			return true;
+		} else {
+			String string = object.toString();
+			try {
+				Integer.parseInt(string);
+			} catch (Exception e) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	
+	private static File getFileFromObject(Object fileObject) {
 		TiBaseFile TiFile = null;
 		try {
 			if (fileObject instanceof TiFile) {

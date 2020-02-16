@@ -13,6 +13,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.appcelerator.kroll.KrollDict;
+import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
 import org.appcelerator.titanium.TiC;
@@ -38,6 +39,7 @@ public class RendererProxy extends KrollProxy {
 	// Standard Debugging variables
 	private static final String LCAT = "ExampleProxy";
 	PdfRenderer renderer;
+
 	// Constructor
 	public RendererProxy() {
 		super();
@@ -45,16 +47,14 @@ public class RendererProxy extends KrollProxy {
 
 	// Handle creation options
 	@Override
-	public void handleCreationDict(KrollDict options) {
-		super.handleCreationDict(options);
-		if (options.containsKey("file")) {
-			try {
-				ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileFromObject(options.get("file")),
-						ParcelFileDescriptor.MODE_READ_ONLY);
-				renderer = new PdfRenderer(pfd);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public void handleCreationArgs(KrollModule m, Object[] o) {
+		super.handleCreationArgs(m, o);
+		try {
+			ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileFromObject(o[0]),
+					ParcelFileDescriptor.MODE_READ_ONLY);
+			renderer = new PdfRenderer(pfd);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -62,22 +62,22 @@ public class RendererProxy extends KrollProxy {
 	public PageProxy getPage(int index) {
 		return new PageProxy(renderer.openPage(index));
 	}
-	
+
 	@Kroll.method
 	public PageProxy getFirstPage() {
 		return new PageProxy(renderer.openPage(0));
 	}
-	
+
 	@Kroll.method
 	public void getPageCount() {
 		renderer.getPageCount();
 	}
-	
+
 	@Kroll.method
 	public void close() {
 		renderer.close();
 	}
-	
+
 	private File getFileFromObject(Object fileObject) {
 		TiBaseFile TiFile = null;
 		try {

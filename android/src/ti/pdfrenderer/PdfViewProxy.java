@@ -8,44 +8,31 @@
  */
 package ti.pdfrenderer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.titanium.TiC;
-import org.appcelerator.titanium.io.TiBaseFile;
-import org.appcelerator.titanium.io.TiFile;
-import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
-import org.appcelerator.titanium.util.TiConvert;
+import org.appcelerator.titanium.io.TiBaseFile;
+import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.titanium.proxy.TiViewProxy;
+import org.appcelerator.titanium.util.TiUIHelper;
 import org.appcelerator.titanium.view.TiCompositeLayout;
 import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
 import org.appcelerator.titanium.view.TiUIView;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.pdf.PdfRenderer;
 import android.graphics.pdf.PdfRenderer.Page;
-import android.os.ParcelFileDescriptor;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import ti.modules.titanium.filesystem.FileProxy;
 
 // This proxy can be created by calling Pdfrenderer.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = PdfrendererModule.class)
 public class PdfViewProxy extends TiViewProxy {
 	// Standard Debugging variables
-	private static final String LCAT = "ExampleProxy";
+	private static final String LCAT = "TiPdf";
 	private Bitmap bitmap;
-	private int width;
-	private int height;
+	
 
 	private class Pdfview extends TiUIView {
 		public Pdfview(TiViewProxy proxy) {
@@ -53,13 +40,8 @@ public class PdfViewProxy extends TiViewProxy {
 			LayoutArrangement arrangement = LayoutArrangement.DEFAULT;
 			TiCompositeLayout container = new TiCompositeLayout(proxy.getActivity(), arrangement);
 			ImageView nativeView = new ImageView(proxy.getActivity());
-		    
-		
-			
 			container.addView(nativeView);
-			BitmapDrawable drawable = (BitmapDrawable) nativeView.getDrawable();
-			bitmap = drawable.getBitmap();
-//			nativeView.setImageBitmap(bitmap);
+			nativeView.setImageBitmap(bitmap);
 			setNativeView(container);
 		}
 
@@ -95,13 +77,27 @@ public class PdfViewProxy extends TiViewProxy {
 		if (options.containsKey("page")) {
 			Object o = options.get("page");
 			if (o instanceof PageProxy) {
-				
+
 				Page page = ((PageProxy) o).getPage();
-				
+
 				if (bitmap != null)
 					page.render(bitmap, null, null, renderMode);
 			}
 		}
+		bitmap = loadImageFromApplication("pdf.png");
+	}
+
+	private Bitmap loadImageFromApplication(String imageName) {
+		Bitmap bitmap = null;
+		String url = null;
+		try {
+			url = resolveUrl(null, imageName);
+			TiBaseFile file = TiFileFactory.createTitaniumFile(new String[] { url }, false);
+			bitmap = TiUIHelper.createBitmap(file.getInputStream());
+		} catch (IOException e) {
+			Log.e(LCAT, " WheelView only supports local image files " + url);
+		}
+		return bitmap;
 	}
 
 }

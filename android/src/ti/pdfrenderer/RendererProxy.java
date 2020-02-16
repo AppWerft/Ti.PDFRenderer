@@ -73,6 +73,11 @@ public class RendererProxy extends KrollProxy {
 		renderer.getPageCount();
 	}
 	
+	@Kroll.method
+	public void close() {
+		renderer.close();
+	}
+	
 	private File getFileFromObject(Object fileObject) {
 		TiBaseFile TiFile = null;
 		try {

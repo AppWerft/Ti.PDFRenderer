@@ -50,6 +50,8 @@ PDF.createPdfView({
 });
 ```
 
+## Good news
+
 With the parameter `pdf` you can directly call:
 
 ```javascript

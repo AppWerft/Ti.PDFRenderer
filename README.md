@@ -34,7 +34,7 @@ This extracted pages has 2 methods:
 
 ```
 page.close();
-page.getDimensions(PDF.UNIT_MM);
+page.getDimensions(PDF.UNIT_MM); // UNIT_INCH, UNIT_PT, UNIT_CM
 page.getIndex();
 ```
 
@@ -45,7 +45,7 @@ PDF.createPdfView({
 	width : 100,
 	height : 200,
 	defaultImage : 'images/pdfdefault.png',
-	renderMode : PDF.RENDER_MODE_FOR_DISPLAY
+	renderMode : PDF.RENDER_MODE_FOR_DISPLAY, //RENDER_MODE_FOR_PRINT
     page : pdfRenderer.openFirstPage()
 });
 ```

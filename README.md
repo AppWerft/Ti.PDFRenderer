@@ -51,4 +51,4 @@ const pdfView = PDF.createPdfView({
 win.add(pdfView);
 ```
 
-See [example](https://github.com/AppWerft/Ti.PDFRenderer/blob/master/example/app.js).
+See [example](./blob/master/example/app.js).

@@ -21,7 +21,7 @@ const pdfRenderer = PDF.createRenderer(pdfFile);
 we get a n instance of Renderer.
 This renderer has 5 methods:
 
-```
+```javascript
 const pagecount = pdfRenderer.getPageCount();
 const page1 = pdfRenderer.openFirstPage();
 const page2 = pdfRenderer.openPage(PAGENUMBER);
@@ -32,7 +32,7 @@ pdfRenderer.close();
 
 This extracted pages has 2 methods:
 
-```
+```javascript
 page.close();
 page.getDimensions(PDF.UNIT_MM); // UNIT_INCH, UNIT_PT, UNIT_CM
 page.getIndex();

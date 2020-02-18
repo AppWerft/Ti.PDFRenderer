@@ -42,8 +42,8 @@ In the end we can create an thumbnail
 
 ```javascript
 const pdfView = PDF.createPdfView({
-	width : 100,
-	height : 200,
+	width : 200,
+	height : 280,
 	renderMode : PDF.RENDER_MODE_FOR_DISPLAY, //RENDER_MODE_FOR_PRINT
 	page : pdfRenderer.openFirstPage()
 });

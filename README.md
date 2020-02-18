@@ -44,7 +44,6 @@ In the end we can create an thumbnail
 const pdfView = PDF.createPdfView({
 	width : 100,
 	height : 200,
-	defaultImage : 'images/pdfdefault.png',
 	renderMode : PDF.RENDER_MODE_FOR_DISPLAY, //RENDER_MODE_FOR_PRINT
 	page : pdfRenderer.openFirstPage()
 });

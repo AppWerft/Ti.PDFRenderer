@@ -11,7 +11,7 @@ const pdfFile = Ti.Filesystem(Ti.Filesystem.applicationDataDirectory,"my.pdf");
 Next an instance of module will build:
 
 ```javascript
-const PDF = requirte('ti.pdfrenderer');
+const PDF = require('ti.pdfrenderer');
 ```
 With 
 

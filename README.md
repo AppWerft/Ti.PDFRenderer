@@ -1,4 +1,4 @@
-# Ti.PDFRenderer
+# Ti.PdfRenderer
 
 
 ## Basic usage

@@ -50,4 +50,4 @@ const pdfView = PDF.createPdfView({
 win.add(pdfView);
 ```
 
-See [example](./blob/master/example/app.js).
+See [more in example](./blob/master/example/app.js).

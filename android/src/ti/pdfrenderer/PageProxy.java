@@ -8,26 +8,56 @@
  */
 package ti.pdfrenderer;
 
+import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollProxy;
+import org.appcelerator.kroll.annotations.Kroll;
+import org.appcelerator.kroll.common.Log;
 
 import android.graphics.pdf.PdfRenderer.Page;
 
+@Kroll.proxy(creatableInModule = PdfrendererModule.class)
 public class PageProxy extends KrollProxy {
+	private static String LCAT = "TiPdfPage";
 	public Page page;
+	public int width;
+	public int height;
+	private float unit=1.0f;
 
 	public PageProxy(Page page) {
 		super();
 		this.page = page;
+		width = page.getWidth();
+		height = page.getHeight();
+		Log.d(LCAT,"PageProxy constructor");
+
 	}
 
 	public Page getPage() {
 		return page;
 	}
+
+	@Kroll.method
 	public int getWidth() {
 		return page.getWidth();
 	}
+	@Kroll.method
+	public void close() {
+		page.close();
+	}
+
+	@Kroll.method
 	public int getHeigt() {
 		return page.getHeight();
+	}
+
+	@Kroll.method
+	public KrollDict getDimensions(float _unit) {
+		unit=_unit;
+		KrollDict res = new KrollDict();
+		res.put("width", width * unit);
+		res.put("height", height * unit);
+		res.put("index", page.getIndex());
+		return res;
 	}
 
 }

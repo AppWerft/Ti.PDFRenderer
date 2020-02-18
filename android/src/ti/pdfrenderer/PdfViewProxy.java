@@ -87,7 +87,7 @@ public class PdfViewProxy extends TiViewProxy {
 		if (options.containsKey("renderMode")) {
 			renderMode = options.getInt("renderMode");
 		}
-		if (options.containsKey("defaultImage")) {
+		/*if (options.containsKey("defaultImage")) {
 			File defaultImageFile = getFileFromObject(options.get("defaultImage"));
 			if (defaultImageFile!= null) {
 				BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
@@ -98,19 +98,24 @@ public class PdfViewProxy extends TiViewProxy {
 				    e.printStackTrace();
 				}         
 			}
-		}
+		}*/
+		bitmap = loadBitmapFromAssets(ctx,"pdf.png");
 		if (options.containsKey("page")) {
 			Object o = options.get("page");
 			if (o instanceof PageProxy) {
+				Log.d(LCAT,"page is PageProxy");
 				Page page = ((PageProxy) o).getPage();
 				if (bitmap != null)
 					page.render(bitmap, null, null, renderMode);
+				else  Log.e(LCAT, "bitmap is null !");
 			} else if (isInteger(options.get("page")))
 				pageIndex = options.getInt("page");
 		}
 		if (options.containsKey("pdf")) {
 			try {
-				ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileFromObject(options.get("pdf")),
+				TiBaseFile file = getFileFromObject(options.get("pdf"));
+				//InputStream input = file.getInputStream();
+				ParcelFileDescriptor pfd = ParcelFileDescriptor.open(file.getNativeFile(),
 						ParcelFileDescriptor.MODE_READ_ONLY);
 				Page page = (new PdfRenderer(pfd)).openPage(pageIndex);
 				if (bitmap != null)
@@ -119,7 +124,7 @@ public class PdfViewProxy extends TiViewProxy {
 				e.printStackTrace();
 			}
 		}
-		bitmap = loadBitmapFromAssets(ctx,"pdf.png");
+		
 	}
 
 	
@@ -156,7 +161,7 @@ public class PdfViewProxy extends TiViewProxy {
 		return true;
 	}
 	
-	private static File getFileFromObject(Object fileObject) {
+	private TiBaseFile getFileFromObject(Object fileObject) {
 		TiBaseFile TiFile = null;
 		try {
 			if (fileObject instanceof TiFile) {
@@ -183,7 +188,7 @@ public class PdfViewProxy extends TiViewProxy {
 				Log.d(LCAT, "TiFile is null");
 				return null;
 			}
-			return TiFile.getNativeFile();
+			return TiFile;
 		} catch (Exception e) {
 			Log.d(LCAT, e.getMessage());
 		}

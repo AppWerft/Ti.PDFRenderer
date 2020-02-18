@@ -8,36 +8,26 @@
  */
 package ti.pdfrenderer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.appcelerator.kroll.KrollDict;
 import org.appcelerator.kroll.KrollModule;
 import org.appcelerator.kroll.KrollProxy;
 import org.appcelerator.kroll.annotations.Kroll;
-import org.appcelerator.titanium.TiC;
+import org.appcelerator.kroll.common.Log;
 import org.appcelerator.titanium.io.TiBaseFile;
 import org.appcelerator.titanium.io.TiFile;
 import org.appcelerator.titanium.io.TiFileFactory;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiConfig;
-import org.appcelerator.titanium.util.TiConvert;
-import org.appcelerator.titanium.proxy.TiViewProxy;
-import org.appcelerator.titanium.view.TiCompositeLayout;
-import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
-import org.appcelerator.titanium.view.TiUIView;
 
-import android.app.Activity;
 import android.graphics.pdf.PdfRenderer;
+import android.graphics.pdf.PdfRenderer.Page;
 import android.os.ParcelFileDescriptor;
 import ti.modules.titanium.filesystem.FileProxy;
+import ti.pdfrenderer.PageProxy;
 
-// This proxy can be created by calling Pdfrenderer.createExample({message: "hello world"})
 @Kroll.proxy(creatableInModule = PdfrendererModule.class)
 public class RendererProxy extends KrollProxy {
 	// Standard Debugging variables
-	private static final String LCAT = "ExampleProxy";
+	private static final String LCAT = "TiPdfRenderer";
 	PdfRenderer renderer;
 
 	// Constructor
@@ -49,36 +39,49 @@ public class RendererProxy extends KrollProxy {
 	@Override
 	public void handleCreationArgs(KrollModule m, Object[] o) {
 		super.handleCreationArgs(m, o);
+		Object obj = o[0];
 		try {
-			ParcelFileDescriptor pfd = ParcelFileDescriptor.open(getFileFromObject(o[0]),
-					ParcelFileDescriptor.MODE_READ_ONLY);
-			renderer = new PdfRenderer(pfd);
+			renderer = new PdfRenderer(ParcelFileDescriptor.open(getTiFileFromObject(obj).getNativeFile(),
+					ParcelFileDescriptor.MODE_READ_ONLY));
+			Log.d(LCAT,"PdfRenderer created " + renderer.getPageCount());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	
+	
 	@Kroll.method
-	public PageProxy getPage(int index) {
-		return new PageProxy(renderer.openPage(index));
+	public boolean shouldScaleForPrinting() {
+		return renderer.shouldScaleForPrinting();
+	}
+	
+	@Kroll.method
+	public int getPageCount() {
+		return renderer.getPageCount();
+	}
+	
+	
+	@Kroll.method
+	public PageProxy openPage(int index) {
+		Page page = renderer.openPage(index);
+		return new PageProxy(page);
 	}
 
 	@Kroll.method
-	public PageProxy getFirstPage() {
-		return new PageProxy(renderer.openPage(0));
+	public PageProxy openFirstPage() {
+		Page page = renderer.openPage(0);
+		return new PageProxy(page);
 	}
 
-	@Kroll.method
-	public void getPageCount() {
-		renderer.getPageCount();
-	}
+	
 
 	@Kroll.method
 	public void close() {
 		renderer.close();
 	}
 
-	private File getFileFromObject(Object fileObject) {
+	private TiBaseFile getTiFileFromObject(Object fileObject) {
 		TiBaseFile TiFile = null;
 		try {
 			if (fileObject instanceof TiFile) {
@@ -105,7 +108,7 @@ public class RendererProxy extends KrollProxy {
 				Log.d(LCAT, "TiFile is null");
 				return null;
 			}
-			return TiFile.getNativeFile();
+			return TiFile;
 		} catch (Exception e) {
 			Log.d(LCAT, e.getMessage());
 		}

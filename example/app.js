@@ -3,37 +3,37 @@
 // to test out the module and to provide instructions
 // to users on how to use it by example.
 
-
 // open a single window
 var win = Ti.UI.createWindow({
-	backgroundColor:'white'
+    backgroundColor : 'white'
 });
 var label = Ti.UI.createLabel();
 win.add(label);
 win.open();
 
-// TODO: write your module tests here
 var pdfrenderer = require('ti.pdfrenderer');
-Ti.API.info("module is => " + pdfrenderer);
-
-label.text = pdfrenderer.example();
-
-Ti.API.info("module exampleProp is => " + pdfrenderer.exampleProp);
-pdfrenderer.exampleProp = "This is a test value";
 
 if (Ti.Platform.name == "android") {
-	var proxy = pdfrenderer.createExample({
-		message: "Creating an example Proxy",
-		backgroundColor: "red",
-		width: 100,
-		height: 100,
-		top: 100,
-		left: 150
-	});
-
-	proxy.printMessage("Hello world!");
-	proxy.message = "Hi world!.  It's me again.";
-	proxy.printMessage("Hello world!");
-	win.add(proxy);
+    var foo = Ti.Filesystem.getFile(Ti.Filesystem.resourcesDirectory, 'sample.pdf');
+    var bar = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'sample.pdf');
+    bar.write(foo.read());
+    var Renderer = pdfrenderer.createRenderer(bar);
+    console.log("pageCount: " + Renderer.getPageCount());
+    console.log("shouldScaleForPrinting: "+ Renderer.shouldScaleForPrinting());
+    console.log("Pagework");
+    var Page = Renderer.openFirstPage();
+    console.log(Page.getDimensions(pdfrenderer.UNIT_CM));
+    var pdfView = pdfrenderer.createPdfView({
+        width : 288,
+        height : 400,
+        borderColor:'silver',
+        borderWidth : 1,
+        renderMode : pdfrenderer.RENDER_MODE_FOR_DISPLAY,
+        page: Page,
+        top : 100
+    });
+    Page.close();
+    Renderer.close();
+    win.add(pdfView);
 }
 

@@ -34,7 +34,7 @@ This extracted pages has 2 methods:
 
 ```
 page.close();
-page.getDimensions();
+page.getDimensions(PDF.UNIT_MM);
 page.getIndex();
 ```
 
@@ -50,17 +50,3 @@ PDF.createPdfView({
 });
 ```
 
-## Good news
-
-With the parameter `pdf` you can directly call:
-
-```javascript
-PDF.createPdfView({
-    width : 100,
-    height : 200,
-    defaultImage : 'images/pdfdefault.png',
-    renderMode : PDF.RENDER_MODE_FOR_DISPLAY
-    page :  0, // optional default = 0
-	pdf : pdfFile
-});
-```

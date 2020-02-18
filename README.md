@@ -46,7 +46,7 @@ PDF.createPdfView({
 	height : 200,
 	defaultImage : 'images/pdfdefault.png',
 	renderMode : PDF.RENDER_MODE_FOR_DISPLAY, //RENDER_MODE_FOR_PRINT
-    page : pdfRenderer.openFirstPage()
+	page : pdfRenderer.openFirstPage()
 });
 ```
 

@@ -51,3 +51,33 @@ win.add(pdfView);
 ```
 
 See [more in 	example](./blob/master/example/app.js).
+
+# Usage in TiScrollableView
+
+This example will only work with small PDFs. For complex PDF you need an event listener for scrolling inside container.
+
+
+```javascript
+const PDF = require('ti.pdfrenderer');
+const pdfRenderer = PDF.createRenderer(pdfFile);
+const pageCount = pdfRenderer.getPagecount();
+var views = [];
+for (var i=0;i<pageCount;i++) {
+	views.push( PDF.createPdfView({
+		width : 200,
+		height : 280,
+		renderMode : PDF.RENDER_MODE_FOR_DISPLAY,
+		page : pdfRenderer.openPage(i)
+	}));
+}
+pdfRenderer.close();
+ 
+const container = Ti.UI.createScrollableView();
+const pdfView = PDF.createPdfView({
+	width : 200,
+	height : 280,
+	renderMode : PDF.RENDER_MODE_FOR_DISPLAY, //RENDER_MODE_FOR_PRINT
+	page : pdfRenderer.openFirstPage()
+});
+win.add(pdfView);
+```
